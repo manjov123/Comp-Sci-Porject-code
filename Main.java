@@ -1,6 +1,8 @@
 /*
 Main - this is a runner class that runs the Game class
 
+Ryan Choudhury Github!!
+
 Author - Marc Shepard
 */
 
