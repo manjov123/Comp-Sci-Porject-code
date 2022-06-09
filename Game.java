@@ -94,7 +94,7 @@ public class Game {
           }
           break;
 
-        case "stats": // Prints current user's highscore
+        case "stats": // Prints current user's highscore for current session
           if (userName == null || userStats.get(userName) == null)
             System.out.println ("You haven't played yet!");
           else
