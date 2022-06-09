@@ -29,10 +29,18 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
-  HashMap<String, String> userStats = new HashMap<String, String>();
+  HashMap<String, Integer> userStats;
   private String userName; // Current user playing the game
   private int sides; // Sides of dice
   private int guess; // User guesses
+
+  public Game() {
+    LeaderboardState state = LeaderboardState.restore();
+    if (state == null)
+      userStats = new HashMap<String, Integer>();
+    else
+      userStats = state.leaderboard;
+  }
   
   public void play() {
     System.out.println("\nWelcome to Dice Guesser! If this is your first game, please enter \"rules\"!"); // add intro letter here
@@ -43,7 +51,6 @@ public class Game {
           
         case "play": // Play the game
           userName = Utils.inputStr ("Welcome to Dice Guesser. Please enter your username: ");
- 
           if (userStats.containsKey(userName)){
             System.out.println("Welcome back! Your highscore was " + userStats.get(userName));
           }
@@ -58,33 +65,33 @@ public class Game {
           int distance_from_score = (Math.abs(actualvalue-guess)+1);
           if(distance_from_score==0)
             distance_from_score=1;
-          int actualscore = sides/distance_from_score;
-          String as = Integer.toString(actualscore);
+          int actualScore = sides/distance_from_score;
           if((actualvalue == guess)){
             System.out.println("Congrats, you guessed it! Your score is: " + sides);
           }
           else {
-            System.out.println("You are wrong, you were " + distance_from_score+" far away, so your score is: " + actualscore);
+            System.out.println("You are wrong, you were " + distance_from_score+" far away, so your score is: " + actualScore);
           } 
           
           if (userStats.get(userName)== null){
-            userStats.put(userName, as);
+            userStats.put(userName, actualScore);
           }
-          int highscore = Integer.parseInt(userStats.get(userName));
-          if(actualscore>highscore){
-            userStats.put(userName, as);
+          int highscore = userStats.get(userName);
+          if(actualScore>highscore){
+            userStats.put(userName, actualScore);
             System.out.println("New highscore!");
           }
           break;
           
         case "leaderboard": // Prints leaderboard
+        /*
           if (userName == null || userStats.get(userName) == null)
-            System.out.println ("You haven't played yet!");
-          else
-            for(String name: userStats.keySet()){
-              String score = userStats.get(name);
-              System.out.println(name + ": " + score);
-            }
+            System.out.println ("You haven't played yet!"); 
+          else */
+          for(String name: userStats.keySet()){
+            int score = userStats.get(name);
+            System.out.println(name + ": " + score);
+          }
           break;
 
         case "stats": // Prints current user's highscore
@@ -109,6 +116,9 @@ public class Game {
           
         case "quit": // Quit
           System.out.println ("Thanks for playing!");
+          LeaderboardState state = new LeaderboardState();
+          state.leaderboard = userStats;
+          state.save();
           return;
           
         default: 
